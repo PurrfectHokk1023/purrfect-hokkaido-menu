@@ -56,6 +56,10 @@ h2{font-weight:700;font-stretch:85%;font-size:21px;line-height:1.1;color:var(--n
 .soldout{font-weight:700;font-size:13px;color:#9a3b00;background:#fde7d9;border-radius:99px;padding:6px 12px}
 #checkout{margin-top:30px;background:#fff;border-radius:18px;padding:18px 16px 20px;box-shadow:0 2px 10px rgba(18,37,101,.08)}
 #checkout h2{border-bottom-width:3px}
+.cohead{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;border-bottom:3px solid var(--orange);padding-bottom:7px}
+.cohead h2{border:0;padding:0}
+.clear{font:inherit;font-weight:600;font-size:14.5px;color:#b00020;background:#fff;border:1.5px solid #e2b4bb;border-radius:99px;min-height:34px;padding:4px 14px;cursor:pointer}
+.clear[hidden]{display:none}
 .empty{margin-top:12px;color:var(--muted)}
 .line{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
 .line .ln{flex:1;font-size:16px;color:var(--indigo);font-weight:600;line-height:1.2}
@@ -98,7 +102,7 @@ input:focus,select:focus,textarea:focus{outline:3px solid rgba(18,37,101,.25);bo
   <div class="banner info" id="banner" hidden></div>
   <div id="menu"></div>
   <section id="checkout">
-    <h2>Your order</h2>
+    <div class="cohead"><h2>Your order</h2><button type="button" class="clear" id="clear" hidden>Clear all</button></div>
     <div id="lines"></div>
     <form id="form" novalidate>
       <label for="name">Your name</label>
@@ -183,6 +187,7 @@ function renderCart() {
       <span class="lp">${peso(l.qty * l.price)}</span>${control(l.id, l.option)}</div>`).join('') + `<div class="total"><span>Total</span><b>${peso(total)}</b></div>`
     : '<p class="empty">Nothing yet. Tap Add on any item above.</p>';
   $('#cartbar').hidden = !n;
+  $('#clear').hidden = !n || sending;
   $('#cartcount').textContent = `View order · ${n} item${n === 1 ? '' : 's'}`;
   $('#carttotal').textContent = peso(total);
   $('#place').disabled = !n || !open || sending;
@@ -208,6 +213,13 @@ document.addEventListener('click', e => {
   const k = b.dataset.k, q = Math.max(0, Math.min(20, (cart[k] || 0) + Number(b.dataset.d)));
   if (q) cart[k] = q; else { delete cart[k]; delete extras[k]; }
   update(k);
+});
+
+$('#clear').addEventListener('click', () => {
+  if (!confirm('Remove everything from your order?')) return;
+  cart = {}; extras = {};
+  $('#err').textContent = '';
+  renderMenu(); renderCart();
 });
 
 function banner(text, warn) { const el = $('#banner'); el.textContent = text; el.className = 'banner ' + (warn ? 'warn' : 'info'); el.hidden = !text; }
