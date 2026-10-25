@@ -103,7 +103,7 @@ input:focus,select:focus,textarea:focus{outline:3px solid rgba(18,37,101,.25);bo
 </header>
 <main class="wrap" id="app">
   <h1>Order for pickup</h1>
-  <p class="lead">Choose your items, then pay at the counter when you collect.</p>
+  <p class="lead">Choose your items and place your order, then pay at the counter. We start making it once it’s paid.</p>
   <a class="back" href="./">← Back to the menu</a>
   <div class="banner info" id="banner" hidden></div>
   <div id="menu"></div>
@@ -123,7 +123,7 @@ input:focus,select:focus,textarea:focus{outline:3px solid rgba(18,37,101,.25);bo
       <label for="notes">Notes <small>(optional, e.g. less ice)</small></label>
       <textarea id="notes" name="notes" maxlength="200"></textarea>
       <div class="hp" aria-hidden="true"><label for="website">Website</label><input id="website" name="website" tabindex="-1" autocomplete="off"></div>
-      <p class="pay">💵 Pay at the counter (cash or GCash) when you pick up. Tell the staff your order number.</p>
+      <p class="pay">💵 Pay at the counter (cash or GCash) and tell the staff your order number. <b>Orders are prepared only after payment.</b></p>
       <p class="err" id="err" role="alert"></p>
       <button class="place" id="place" type="submit" disabled>Place order</button>
     </form>
@@ -308,9 +308,9 @@ $('#form').addEventListener('submit', async e => {
 });
 
 const STATUS_TEXT = {
-  New: ['Received', "We've got your order and will start on it soon."],
-  Preparing: ['Preparing', "We're making your order now."],
-  Ready: ['Ready for pickup!', 'Come to the counter, show this number and pay there.'],
+  New: ['Waiting for payment', "Pay at the counter (cash or GCash) and show this number. We start making your order once it's paid."],
+  Preparing: ['Paid · preparing', "Thank you! We're making your order now."],
+  Ready: ['Ready for pickup!', 'Come to the counter and show this number.'],
   'Picked up': ['Picked up', 'Enjoy! Thank you for ordering.'],
   Cancelled: ['Cancelled', 'This order was cancelled. Please ask at the counter.'],
 };
@@ -323,7 +323,7 @@ function showDone(o, status) {
     <p class="k">Your order number</p><p class="num">${esc(o.code)}</p>
     <span class="st ${esc((status || 'New').split(' ')[0])}" id="st">${esc(label)}</span>
     <p id="sttext">${esc(text)}</p>
-    <p><b>Total ${peso(o.total)}</b> · pay at the counter<br>Pickup: ${esc(o.pickup || '')}</p>
+    <p><b>Total ${peso(o.total)}</b> · pay at the counter first<br>Pickup: ${esc(o.pickup || '')}</p>
     <div class="sum">${esc(o.summary)}</div>
     <button class="again" id="again">Start a new order</button>
     <p><a class="back" href="./">← Back to the menu</a></p></div>`;
