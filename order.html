@@ -61,10 +61,16 @@ h2{font-weight:700;font-stretch:85%;font-size:21px;line-height:1.1;color:var(--n
 .clear{font:inherit;font-weight:600;font-size:14.5px;color:#b00020;background:#fff;border:1.5px solid #e2b4bb;border-radius:99px;min-height:34px;padding:4px 14px;cursor:pointer}
 .clear[hidden]{display:none}
 .empty{margin-top:12px;color:var(--muted)}
-.line{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.li{border-bottom:1px solid var(--line)}
+.li.on{background:#eef1f8;margin:0 -16px;padding:0 16px 14px}
+.line{display:flex;align-items:center;gap:10px;padding:10px 0}
 .line .ln{flex:1;font-size:16px;color:var(--indigo);font-weight:600;line-height:1.2}
 .line .ln small{display:block;font-weight:500;font-size:13.5px;color:var(--muted)}
 .line .lp{font-weight:700;color:var(--price);font-variant-numeric:tabular-nums;min-width:58px;text-align:right}
+.edit{display:block;font:inherit;font-weight:600;font-size:14.5px;color:var(--navy);background:none;border:0;padding:6px 0 0;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.editor .adds{margin:2px 0 10px}
+.enote{margin:0 0 10px;font-size:13.5px;color:var(--muted)}
+.eb{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:4px}
 .total{display:flex;justify-content:space-between;align-items:baseline;margin-top:12px;font-weight:700;font-size:20px;color:var(--navy)}
 .total b{color:var(--price);font-size:24px}
 label{display:block;margin-top:14px;font-weight:600;font-size:15px;color:var(--navy)}
@@ -140,6 +146,7 @@ const addonPrice = a => ADDONS[a].options[0].price;
 const key = (id, opt) => id + '|' + opt;
 let cart = store.get('ph-cart') || {};          // "id|option" -> qty
 let soldOut = new Set(), open = !!DATA.url, sending = false;
+let editing = null, merged = null;               // cart key open in the order-box editor; key a change was folded into
 Object.keys(cart).forEach(k => { const [id, opt] = k.split('|'); if (!items[id] || !items[id].options.some(o => o.label === opt)) delete cart[k]; });
 let extras = store.get('ph-extras') || {};      // "id|option" -> add-on ids for that coffee line
 Object.keys(extras).forEach(k => { const it = items[k.split('|')[0]]; if (!cart[k] || !it || !it.addons) delete extras[k]; else extras[k] = extras[k].filter(a => it.addons.includes(a) && ADDONS[a]); });
@@ -181,10 +188,35 @@ function lines() {
   });
 }
 
+function editor(l) {
+  const it = items[l.id], k = l.k;
+  const opts = it.options.length < 2 ? '' : `<div class="adds"><span class="al">Option:</span>${it.options.map(o => {
+    const gone = soldOut.has(key(it.id, o.label));
+    return `<button class="chip" data-e="${esc(k)}" data-o="${esc(o.label)}" aria-pressed="${o.label === l.option}" ${gone || !open ? 'disabled' : ''}>${esc(o.label)} ${gone ? '· sold out' : peso(o.price)}</button>`;
+  }).join('')}</div>`;
+  return `<div class="editor">${opts}${addsRow(it, k)}<div class="adds"><span class="al">Quantity:</span>${control(l.id, l.option)}</div>
+    ${merged === k ? `<p class="enote">Combined with the ${esc(l.option)} already in your order.</p>` : ''}
+    <div class="eb"><button type="button" class="clear" data-rm="${esc(k)}" ${open ? '' : 'disabled'}>Remove item</button><button type="button" class="add" data-ed="">Done</button></div></div>`;
+}
+
+function changeOption(k, opt) {
+  const [id, cur] = k.split('|'), nk = key(id, opt), q = cart[k], had = !!cart[nk];
+  if (opt === cur || !q || soldOut.has(nk)) return;
+  // keep the line where it was; if that option is already in the order, fold the other line into this one
+  cart = Object.fromEntries(Object.entries(cart).flatMap(([x, n]) =>
+    x === k ? [[nk, had ? Math.min(20, cart[nk] + q) : q]] : x === nk ? [] : [[x, n]]));
+  const adds = [...new Set([...(extras[nk] || []), ...(extras[k] || [])])];
+  delete extras[k];
+  if (adds.length) extras[nk] = adds; else delete extras[nk];
+  editing = nk; merged = had ? nk : null;
+  update(k); update(nk);
+}
+
 function renderCart() {
+  if (editing && !cart[editing]) editing = null;
   const ls = lines(), n = ls.reduce((s, l) => s + l.qty, 0), total = ls.reduce((s, l) => s + l.qty * l.price, 0);
-  $('#lines').innerHTML = ls.length ? ls.map(l => `<div class="line"><span class="ln">${l.qty}× ${esc(l.name)}${l.option || l.adds.length ? `<small>${esc([l.option, ...l.addNames.map(n => '+ ' + n)].filter(Boolean).join(' · '))}</small>` : ''}</span>
-      <span class="lp">${peso(l.qty * l.price)}</span>${control(l.id, l.option)}</div>`).join('') + `<div class="total"><span>Total</span><b>${peso(total)}</b></div>`
+  $('#lines').innerHTML = ls.length ? ls.map(l => { const on = editing === l.k; return `<div class="li${on ? ' on' : ''}"><div class="line"><span class="ln">${l.qty}× ${esc(l.name)}${l.option || l.adds.length ? `<small>${esc([l.option, ...l.addNames.map(n => '+ ' + n)].filter(Boolean).join(' · '))}</small>` : ''}${on || sending ? '' : `<button type="button" class="edit" data-ed="${esc(l.k)}">Edit</button>`}</span>
+      <span class="lp">${peso(l.qty * l.price)}</span>${on ? '' : control(l.id, l.option)}</div>${on ? editor(l) : ''}</div>`; }).join('') + `<div class="total"><span>Total</span><b>${peso(total)}</b></div>`
     : '<p class="empty">Nothing yet. Tap Add on any item above.</p>';
   $('#cartbar').hidden = !n;
   $('#clear').hidden = !n || sending;
@@ -202,6 +234,13 @@ function update(k) {
 }
 
 document.addEventListener('click', e => {
+  if (sending) return;
+  const ed = e.target.closest('button[data-ed]');
+  if (ed) { editing = ed.dataset.ed || null; merged = null; return renderCart(); }
+  const rm = e.target.closest('button[data-rm]');
+  if (rm && open) { const k = rm.dataset.rm; delete cart[k]; delete extras[k]; return update(k); }
+  const o = e.target.closest('button[data-e]');
+  if (o && open) return changeOption(o.dataset.e, o.dataset.o);
   const c = e.target.closest('button[data-x]');
   if (c && open) {
     const k = c.dataset.x, a = c.dataset.a, cur = extras[k] || [];
@@ -217,7 +256,7 @@ document.addEventListener('click', e => {
 
 $('#clear').addEventListener('click', () => {
   if (!confirm('Remove everything from your order?')) return;
-  cart = {}; extras = {};
+  cart = {}; extras = {}; editing = null;
   $('#err').textContent = '';
   renderMenu(); renderCart();
 });
