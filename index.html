@@ -76,6 +76,36 @@ main a.order{margin-top:30px}
 .deals.boxes .dp{margin-top:0;color:#fff;font-size:22px}
 .deals.boxes .dp small{color:#fff;font-size:12px}
 @media (min-width:560px){.deals{grid-template-columns:repeat(4,1fr)} .deals.boxes .deal{flex-direction:column;text-align:center}}
+.barlink{display:block;margin-top:10px;font-weight:600;font-size:15px;color:var(--navy)}
+.barhero{margin-top:12px;background:var(--card);border-radius:16px;padding:12px;text-align:center}
+.barhero img{width:100%;max-width:345px;height:auto}
+.barhero p{margin-top:6px;font-size:16px;line-height:1.35}
+.events{display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+.events span{background:var(--navy);color:#fff;border-radius:99px;padding:4px 10px;font-size:13px;font-weight:600}
+.pkgs{display:grid;gap:12px;margin-top:12px}
+.pkg{background:var(--card);border-radius:16px;overflow:hidden}
+.pkg header{display:flex;align-items:center;justify-content:space-between;background:var(--navy);color:#fff;padding:10px 14px}
+.pkg h3{font-family:Montserrat,sans-serif;font-weight:700;font-size:15px;letter-spacing:.18em;text-transform:uppercase}
+.pp{font-weight:700;font-size:24px;line-height:1;text-align:right;color:var(--yellow)}
+.pp small{display:block;font-size:12px;font-weight:600;color:#fff;margin-top:2px}
+.pb{display:flex;gap:10px;padding:12px 14px 14px;align-items:flex-start}
+.pb img{width:96px;height:auto;flex:none;object-fit:contain}
+.lbl{font-weight:700;font-size:14px;color:var(--navy);text-transform:uppercase;letter-spacing:.06em}
+.pb ul{margin:4px 0 0 18px;font-size:15px;line-height:1.35}
+.add{margin-top:8px;font-size:14.5px;color:var(--ink)}
+.add b{color:var(--price)}
+.terms{margin-top:12px;background:var(--card);border-radius:16px;padding:12px 14px}
+.terms h3,.book h3{font-weight:700;font-size:18px;color:var(--navy)}
+.terms ul{margin:6px 0 0 18px;font-size:15px;line-height:1.4}
+.book{margin-top:12px;background:var(--navy);color:#fff;border-radius:16px;padding:16px 14px;text-align:center}
+.book h3{color:var(--yellow);font-size:26px;letter-spacing:.06em;text-transform:uppercase}
+.book p{margin-top:4px;font-size:15px}
+.book a{display:flex;align-items:center;justify-content:center;margin:10px auto 0;max-width:320px;height:48px;border-radius:12px;font-weight:700;font-size:18px;text-decoration:none}
+.book .call{background:var(--price);color:#fff}
+.book .text{background:#fff;color:var(--navy)}
+.book .fb{margin-top:12px}
+.paybadge{margin-top:10px;display:inline-flex;align-items:center;gap:6px;background:var(--card);border:2px solid var(--navy);color:var(--navy);border-radius:99px;padding:5px 12px;font-weight:600;font-size:14px}
+@media (min-width:560px){.pkgs{grid-template-columns:1fr 1fr}}
 [hidden]{display:none!important}
 button.getapp{display:flex;align-items:center;justify-content:center;gap:8px;margin:10px auto 0;height:42px;padding:0 18px 0 8px;border:2px solid var(--navy);border-radius:99px;background:#fff;color:var(--navy);font:600 16px/1 Fredoka,system-ui,sans-serif;cursor:pointer}
 button.getapp img{border-radius:7px}
@@ -91,6 +121,8 @@ button.getapp img{border-radius:7px}
   <a class="order" href="order.html">Order for pickup →</a>
   <button type="button" class="getapp" id="getapp" hidden><img src="icons/icon-192.png" alt="" width="28" height="28">Install the app</button>
 <div class="appnote" id="appnote" hidden role="dialog" aria-live="polite"><p id="appnote-text"></p><button type="button" id="appnote-ok">OK</button></div>
+  <p class="paybadge">💳 We accept all types of credit cards</p>
+  <a class="barlink" href="#mobile-bar">🍦 Mobile Ice Cream Bar for events ↓</a>
 </header>
 <main class="wrap">
   <section id="deals"><h2>Cones &amp; Deals</h2><div class="deals boxes"><div class="deal"><div class="disc"><img src="img/deal-hokkaido-waffle-crisp.webp" alt="Hokkaido Waffle Crisp" width="80" height="130"></div><div class="dtxt"><p class="dn">Hokkaido Waffle Crisp</p><p class="dh"><span>₱35 ONLY</span></p></div></div><div class="deal"><div class="disc"><img src="img/deal-matcha-waffle-crisp.webp" alt="Matcha Waffle Crisp" width="80" height="130"></div><div class="dtxt"><p class="dn">Matcha Waffle Crisp</p><p class="dh"><span>NEW!</span></p><p class="dp">₱45</p></div></div><div class="deal"><div class="disc"><img src="img/deal-hokkaido-belgian-cone.webp" alt="Hokkaido Belgian Cone" width="80" height="130"></div><div class="dtxt"><p class="dn">Hokkaido Belgian Cone</p><p class="dh"><span>BUY 1 GET 1</span></p><p class="dp">₱60 <small>for two</small></p></div></div><div class="deal"><div class="disc"><img src="img/deal-matcha-belgian-cone.webp" alt="Matcha Belgian Cone" width="80" height="130"></div><div class="dtxt"><p class="dn">Matcha Belgian Cone</p><p class="dh"><span>NEW!</span></p><p class="dp">₱80</p></div></div></div></section>
@@ -109,8 +141,19 @@ button.getapp img{border-radius:7px}
   <section><h2>Coffee add-ons</h2><p class="sub">Add to any coffee above.</p><ul class="list"><li class="item"><span class="nm">Espresso Shot</span><span class="pr">+₱30</span></li><li class="item"><span class="nm">Oat Milk</span><span class="pr">+₱40</span></li></ul></section>
   <section><h2>Snacks</h2><ul class="list"><li class="item"><span class="nm">Chicken Poppers</span><span class="pr">₱120</span></li><li class="item"><span class="nm">Fries</span><span class="pr">₱120</span></li><li class="item"><span class="nm">Chicken Poppers + Fries<span class="combo">Combo</span></span><span class="pr">₱220</span></li><li class="item"><span class="nm">Nachos</span><span class="pr">₱240</span></li></ul></section>
   </div>
+  <section id="mobile-bar"><h2>Mobile Ice Cream Bar</h2>
+  <div class="barhero"><img src="img/bar-cart.webp" alt="Purrfect Hokkaido mobile ice cream cart" loading="lazy" width="345" height="334">
+    <p>Bring our ice cream cart to your event: the perfect addition to any celebration!</p>
+    <p class="events"><span>Baptism</span><span>Birthday</span><span>Wedding</span><span>Private events</span><span>School fairs</span></p></div>
+  <div class="pkgs"><article class="pkg"><header><h3>Package 1</h3><p class="pp">₱4,500<small>for 50 pax</small></p></header><div class="pb"><img src="img/bar-cone.webp" alt="" loading="lazy" width="110" height="140"><div><p class="lbl">Inclusions</p><ul><li>50 cones</li><li>1 Classic Signature</li><li>Aesthetic Mobile Ice Cream Bar</li><li>4 hours of service</li><li>1 uniformed sorbetero</li><li>1 waffle sugar cone</li><li>FREE transportation within the Cavite area</li></ul><p class="add"><b>Additional:</b> ₱20 for each additional waffle cone</p></div></div></article><article class="pkg"><header><h3>Package 2</h3><p class="pp">₱7,500<small>for 50 pax</small></p></header><div class="pb"><img src="img/bar-karamitsu.webp" alt="" loading="lazy" width="110" height="140"><div><p class="lbl">Inclusions</p><ul><li>50 cups</li><li>1 Premium Signature (Karamitsu Boba)</li><li>1 plate for layout design for cups</li><li>Aesthetic Mobile Ice Cream Bar</li><li>4 hours of service</li><li>1 uniformed sorbetero</li><li>1 cup (8 oz)</li><li>FREE transportation within the Cavite area</li></ul><p class="add"><b>Additional:</b> ₱85 for each additional cup</p></div></div></article><article class="pkg"><header><h3>Package 3</h3><p class="pp">₱11,000<small>for 100 pax</small></p></header><div class="pb"><img src="img/bar-two-cups.webp" alt="" loading="lazy" width="110" height="140"><div><p class="lbl">Inclusions</p><ul><li>100 cups (8 oz)</li><li>2 Premium Signatures (Karamitsu Boba & Chocolate Crumble Bites)</li><li>Aesthetic Mobile Ice Cream Bar</li><li>4 hours of service</li><li>2 uniformed sorbeteros</li><li>1 plate for layout design for cups</li><li>FREE transportation within the Cavite area</li></ul><p class="add"><b>Additional:</b> ₱85 for each additional cup</p></div></div></article><article class="pkg"><header><h3>Package 4</h3><p class="pp">₱15,000<small>for 150 pax</small></p></header><div class="pb"><img src="img/bar-two-cups.webp" alt="" loading="lazy" width="110" height="140"><div><p class="lbl">Inclusions</p><ul><li>150 cups (8 oz)</li><li>2 Premium Signatures (Karamitsu Boba & Chocolate Crumble Bites)</li><li>Aesthetic Mobile Ice Cream Bar</li><li>4 hours of service</li><li>2 uniformed sorbeteros</li><li>1 plate for layout design for cups</li><li>FREE transportation within the Cavite area</li></ul><p class="add"><b>Additional:</b> ₱85 for each additional cup</p></div></div></article></div>
+  <div class="terms"><h3>Terms &amp; conditions</h3><ul><li>A 50% downpayment is required.</li><li>Full payment is required before the date of the event.</li><li>Transportation fees start at ₱1,000 outside the Cavite area.</li></ul></div>
+  <div class="book"><h3>Book now!</h3><p>For bookings &amp; inquiries, reach us at:</p>
+    <a class="call" href="tel:+639054604595">📞 Call 0905 460 4595</a>
+    <a class="text" href="sms:+639054604595">💬 Text us</a>
+    <p class="fb">Facebook: <b>Purrfect Hokkaido Ice Cream</b></p></div>
+</section>
   <a class="order" href="order.html">Order for pickup →</a>
-  <footer><span class="key"><svg class="star" viewBox="0 0 100 100" role="img" aria-label="Best seller"><path d="M50 6 L62 36 L94 38 L69 58 L77 90 L50 72 L23 90 L31 58 L6 38 L38 36 Z" fill="#FCF41C" stroke="#141414" stroke-width="7" stroke-linejoin="round"/></svg> Best seller</span><span>Prices in Philippine pesos (₱)</span></footer>
+  <footer><span class="key"><svg class="star" viewBox="0 0 100 100" role="img" aria-label="Best seller"><path d="M50 6 L62 36 L94 38 L69 58 L77 90 L50 72 L23 90 L31 58 L6 38 L38 36 Z" fill="#FCF41C" stroke="#141414" stroke-width="7" stroke-linejoin="round"/></svg> Best seller</span><span>Prices in Philippine pesos (₱)</span><span>💳 We accept cash, GCash &amp; all types of credit cards</span></footer>
 </main>
 <script>
 (() => {

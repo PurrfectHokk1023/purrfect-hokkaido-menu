@@ -1,10 +1,14 @@
-const CACHE = 'ph-d948efaf764f';
+const CACHE = 'ph-334bf0abb377';
 const PRECACHE = [
  "./",
  "icons/apple-touch-icon.png",
  "icons/icon-192.png",
  "icons/icon-512.png",
  "icons/maskable-512.png",
+ "img/bar-cart.webp",
+ "img/bar-cone.webp",
+ "img/bar-karamitsu.webp",
+ "img/bar-two-cups.webp",
  "img/be-chocolate.webp",
  "img/be-dark-caramel.webp",
  "img/be-matcha.webp",
