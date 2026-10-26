@@ -76,6 +76,7 @@ main a.order{margin-top:30px}
 .deals.boxes .dp{margin-top:0;color:#fff;font-size:22px}
 .deals.boxes .dp small{color:#fff;font-size:12px}
 @media (min-width:560px){.deals{grid-template-columns:repeat(4,1fr)} .deals.boxes .deal{flex-direction:column;text-align:center}}
+[hidden]{display:none!important}
 button.getapp{display:flex;align-items:center;justify-content:center;gap:8px;margin:10px auto 0;height:42px;padding:0 18px 0 8px;border:2px solid var(--navy);border-radius:99px;background:#fff;color:var(--navy);font:600 16px/1 Fredoka,system-ui,sans-serif;cursor:pointer}
 button.getapp img{border-radius:7px}
 .appnote{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:50;max-width:440px;margin:0 auto;background:var(--navy);color:#fff;border-radius:16px;padding:16px;box-shadow:0 8px 28px rgba(0,0,0,.3);font-size:16px;line-height:1.35}
@@ -116,7 +117,7 @@ button.getapp img{border-radius:7px}
   if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
   if (matchMedia('(display-mode: standalone)').matches || navigator.standalone) return;  // already the app
   const btn = document.getElementById('getapp'), note = document.getElementById('appnote');
-  const ua = navigator.userAgent, ios = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const ua = navigator.userAgent, ios = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1 && !/Android/.test(ua));
   const inApp = /FBAN|FBAV|FB_IAB|Instagram|Messenger|Line\/|TikTok/i.test(ua);
   let ask = null;
   const say = html => { document.getElementById('appnote-text').innerHTML = html; note.hidden = false; };

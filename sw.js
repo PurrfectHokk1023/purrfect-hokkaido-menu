@@ -1,4 +1,4 @@
-const CACHE = 'ph-d3efd661e0de';
+const CACHE = 'ph-d948efaf764f';
 const PRECACHE = [
  "./",
  "icons/apple-touch-icon.png",
@@ -38,6 +38,7 @@ const PRECACHE = [
  "img/sundae-oreo-flow.webp",
  "img/sundae-strawberry.webp",
  "index.html",
+ "install.html",
  "manifest.webmanifest",
  "order.html"
 ];
