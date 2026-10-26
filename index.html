@@ -7,6 +7,12 @@
 <meta name="description" content="Purrfect Hokkaido menu: Hokkaido Belgian waffles, sundaes, milkshakes, cones and coffee by Primo Café.">
 <meta name="theme-color" content="#122565">
 <link rel="icon" href="img/cat-mark.webp">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Purrfect Hokkaido">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Fredoka:wdth,wght@75..125,400..700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
@@ -70,6 +76,11 @@ main a.order{margin-top:30px}
 .deals.boxes .dp{margin-top:0;color:#fff;font-size:22px}
 .deals.boxes .dp small{color:#fff;font-size:12px}
 @media (min-width:560px){.deals{grid-template-columns:repeat(4,1fr)} .deals.boxes .deal{flex-direction:column;text-align:center}}
+button.getapp{display:flex;align-items:center;justify-content:center;gap:8px;margin:10px auto 0;height:42px;padding:0 18px 0 8px;border:2px solid var(--navy);border-radius:99px;background:#fff;color:var(--navy);font:600 16px/1 Fredoka,system-ui,sans-serif;cursor:pointer}
+button.getapp img{border-radius:7px}
+.appnote{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:50;max-width:440px;margin:0 auto;background:var(--navy);color:#fff;border-radius:16px;padding:16px;box-shadow:0 8px 28px rgba(0,0,0,.3);font-size:16px;line-height:1.35}
+.appnote b{color:var(--yellow);font-weight:600}
+.appnote button{display:block;margin:12px 0 0 auto;height:38px;padding:0 22px;border:0;border-radius:99px;background:var(--yellow);color:var(--navy);font:700 16px/1 Fredoka,system-ui,sans-serif;cursor:pointer}
 </style>
 </head>
 <body>
@@ -77,6 +88,8 @@ main a.order{margin-top:30px}
   <div class="lockup"><img src="img/cat-mark.webp" alt="" width="70" height="70"><div><div class="w1">PURRFECT</div><div class="w2">HOKKAID<span>O</span></div></div></div>
   <div class="bar">MILKSHAKES<i>•</i>ICE CREAM<i>•</i>COFFEE<i>•</i>WAFFLES</div>
   <a class="order" href="order.html">Order for pickup →</a>
+  <button type="button" class="getapp" id="getapp" hidden><img src="icons/icon-192.png" alt="" width="28" height="28">Install the app</button>
+<div class="appnote" id="appnote" hidden role="dialog" aria-live="polite"><p id="appnote-text"></p><button type="button" id="appnote-ok">OK</button></div>
 </header>
 <main class="wrap">
   <section id="deals"><h2>Cones &amp; Deals</h2><div class="deals boxes"><div class="deal"><div class="disc"><img src="img/deal-hokkaido-waffle-crisp.webp" alt="Hokkaido Waffle Crisp" width="80" height="130"></div><div class="dtxt"><p class="dn">Hokkaido Waffle Crisp</p><p class="dh"><span>₱35 ONLY</span></p></div></div><div class="deal"><div class="disc"><img src="img/deal-matcha-waffle-crisp.webp" alt="Matcha Waffle Crisp" width="80" height="130"></div><div class="dtxt"><p class="dn">Matcha Waffle Crisp</p><p class="dh"><span>NEW!</span></p><p class="dp">₱45</p></div></div><div class="deal"><div class="disc"><img src="img/deal-hokkaido-belgian-cone.webp" alt="Hokkaido Belgian Cone" width="80" height="130"></div><div class="dtxt"><p class="dn">Hokkaido Belgian Cone</p><p class="dh"><span>BUY 1 GET 1</span></p><p class="dp">₱60 <small>for two</small></p></div></div><div class="deal"><div class="disc"><img src="img/deal-matcha-belgian-cone.webp" alt="Matcha Belgian Cone" width="80" height="130"></div><div class="dtxt"><p class="dn">Matcha Belgian Cone</p><p class="dh"><span>NEW!</span></p><p class="dp">₱80</p></div></div></div></section>
@@ -98,5 +111,25 @@ main a.order{margin-top:30px}
   <a class="order" href="order.html">Order for pickup →</a>
   <footer><span class="key"><svg class="star" viewBox="0 0 100 100" role="img" aria-label="Best seller"><path d="M50 6 L62 36 L94 38 L69 58 L77 90 L50 72 L23 90 L31 58 L6 38 L38 36 Z" fill="#FCF41C" stroke="#141414" stroke-width="7" stroke-linejoin="round"/></svg> Best seller</span><span>Prices in Philippine pesos (₱)</span></footer>
 </main>
+<script>
+(() => {
+  if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+  if (matchMedia('(display-mode: standalone)').matches || navigator.standalone) return;  // already the app
+  const btn = document.getElementById('getapp'), note = document.getElementById('appnote');
+  const ua = navigator.userAgent, ios = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const inApp = /FBAN|FBAV|FB_IAB|Instagram|Messenger|Line\/|TikTok/i.test(ua);
+  let ask = null;
+  const say = html => { document.getElementById('appnote-text').innerHTML = html; note.hidden = false; };
+  addEventListener('beforeinstallprompt', e => { e.preventDefault(); ask = e; btn.hidden = false; });
+  addEventListener('appinstalled', () => { btn.hidden = true; note.hidden = true; });
+  if (ios || inApp) btn.hidden = false;
+  btn.addEventListener('click', async () => {
+    if (ask) { ask.prompt(); const c = await ask.userChoice; ask = null; if (c.outcome === 'accepted') btn.hidden = true; }
+    else if (inApp) say('To install, open this page in <b>' + (ios ? 'Safari' : 'Chrome') + '</b> first: tap the <b>⋯</b> menu, then <b>Open in browser</b>.');
+    else if (ios) say('Tap the <b>Share</b> button in Safari, then <b>Add to Home Screen</b>. The Purrfect Hokkaido app then sits on your home screen.');
+  });
+  document.getElementById('appnote-ok').addEventListener('click', () => { note.hidden = true; });
+})();
+</script>
 </body>
 </html>
