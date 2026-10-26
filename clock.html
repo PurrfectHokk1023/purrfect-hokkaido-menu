@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Time Clock · Purrfect Hokkaido</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#122565">
+<link rel="icon" href="img/cat-mark.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wdth,wght@75..125,400..700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EAEAEA;--card:#fff;--navy:#122565;--teal:#108092;--green:#448F18;--orange:#EA6010;--ink:#1A2A44;--yellow:#FCF41C;color-scheme:light}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:Fredoka,system-ui,sans-serif;-webkit-text-size-adjust:100%}
+.wrap{max-width:440px;margin:0 auto;padding:22px 16px calc(28px + env(safe-area-inset-bottom))}
+.lockup{display:flex;align-items:center;gap:10px;justify-content:center}
+.lockup img{height:52px;width:auto}
+.w1{font-weight:700;font-size:28px;line-height:.9;color:var(--navy)}
+.w2{font-weight:700;font-size:19.5px;line-height:1;color:var(--teal);display:flex;justify-content:space-between}
+.w2 span:last-child{color:var(--green)}
+h1{margin-top:14px;text-align:center;font:700 14px/1 Montserrat,sans-serif;letter-spacing:.2em;color:var(--orange)}
+.clock{margin-top:6px;text-align:center;font-weight:700;font-size:54px;line-height:1;color:var(--navy);font-variant-numeric:tabular-nums}
+.date{text-align:center;font-size:16px;margin-top:4px}
+.card{margin-top:18px;background:var(--card);border-radius:18px;padding:16px;display:grid;gap:12px}
+label{font-weight:600;font-size:15px;color:var(--navy);display:grid;gap:6px}
+select,input{font:inherit;font-size:20px;padding:12px;border:2px solid #cfd5e3;border-radius:12px;background:#fff;color:var(--ink);width:100%}
+input{letter-spacing:.4em;text-align:center}
+select:focus,input:focus{outline:none;border-color:var(--navy)}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+button{font:700 19px/1.1 Fredoka,system-ui,sans-serif;border:0;border-radius:14px;height:64px;color:#fff;cursor:pointer}
+button[disabled]{opacity:.5}
+.in{background:var(--green)} .out{background:var(--navy)} .bo,.bi{background:var(--teal)}
+.msg{margin-top:14px;border-radius:16px;padding:16px;text-align:center}
+.msg.ok{background:var(--navy);color:#fff}
+.msg.ok b{display:block;font-size:24px;color:var(--yellow)}
+.msg.ok .t{display:block;font-size:44px;font-weight:700;margin-top:4px}
+.msg.err{background:#fde7d9;color:#8a2c00;font-weight:600;font-size:17px}
+.foot{margin-top:16px;text-align:center;font-size:13px;color:#555}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="lockup"><img src="img/cat-mark.webp" alt="" width="52" height="52"><div><div class="w1">PURRFECT</div><div class="w2"><span>H</span><span>O</span><span>K</span><span>K</span><span>A</span><span>I</span><span>D</span><span>O</span></div></div></div>
+  <h1>STAFF TIME CLOCK</h1>
+  <div class="clock" id="clock">--:--</div>
+  <div class="date" id="date"></div>
+  <form class="card" id="form" autocomplete="off">
+    <label>Your name<select id="name" required><option value="">Loading…</option></select></label>
+    <label>PIN<input id="pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="••••" required></label>
+    <label>Branch<select id="branch"></select></label>
+    <div class="btns">
+      <button type="button" class="in" data-a="Time In">Time In</button>
+      <button type="button" class="out" data-a="Time Out">Time Out</button>
+      <button type="button" class="bo" data-a="Break Out">Break Out</button>
+      <button type="button" class="bi" data-a="Break In">Break In</button>
+    </div>
+  </form>
+  <div class="msg" id="msg" hidden></div>
+  <p class="foot">The time saved is the system time (Manila), not your phone's. Your PIN is personal: never share it.</p>
+</main>
+<script>
+const DATA = {"url": "https://script.google.com/macros/s/AKfycbzOB4gUkuWzD5L4ECpIFeCc_D-4tmtCuEkKWf5mIACTYsxx09jv8g1vN0PO77zvRhA/exec"};
+const $ = s => document.querySelector(s);
+const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
+const tick = () => {
+  const n = new Date();
+  $('#clock').textContent = n.toLocaleTimeString('en-PH', { hour: 'numeric', minute: '2-digit', timeZone: 'Asia/Manila' });
+  $('#date').textContent = n.toLocaleDateString('en-PH', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Asia/Manila' });
+};
+tick(); setInterval(tick, 1000);
+let timer = null;
+const show = (html, ok) => {
+  const m = $('#msg'); m.className = 'msg ' + (ok ? 'ok' : 'err'); m.innerHTML = html; m.hidden = false;
+  clearTimeout(timer); timer = setTimeout(() => { m.hidden = true; }, ok ? 9000 : 7000);
+};
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+let staff = [];
+async function load() {
+  if (!DATA.url) { $('#name').innerHTML = '<option value="">Not set up yet</option>'; return; }
+  try {
+    const r = await (await fetch(DATA.url + '?staff=1')).json();
+    staff = r.staff || [];
+    $('#name').innerHTML = '<option value="">Choose your name</option>' + staff.map(s => `<option>${esc(s.name)}</option>`).join('');
+    $('#branch').innerHTML = (r.branches || []).map(b => `<option>${esc(b)}</option>`).join('');
+    const b = store.get('ph-clock-branch'); if (b) $('#branch').value = b;
+  } catch (e) {
+    $('#name').innerHTML = '<option value="">No connection. Pull down to retry.</option>';
+  }
+}
+$('#name').addEventListener('change', () => {
+  const s = staff.find(x => x.name === $('#name').value);
+  if (s && s.branch && !store.get('ph-clock-branch')) $('#branch').value = s.branch;
+  $('#pin').focus();
+});
+$('#branch').addEventListener('change', () => store.set('ph-clock-branch', $('#branch').value));
+let busy = false;
+document.querySelectorAll('.btns button').forEach(btn => btn.addEventListener('click', async () => {
+  if (busy) return;
+  const name = $('#name').value, pin = $('#pin').value.trim();
+  if (!name) return show('Choose your name first.');
+  if (!/^\d{4}$/.test(pin)) return show('Type your 4-digit PIN.'), $('#pin').focus();
+  busy = true; document.querySelectorAll('.btns button').forEach(b => b.disabled = true);
+  try {
+    const res = await fetch(DATA.url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ clock: 1, name, pin, action: btn.dataset.a, branch: $('#branch').value }) });
+    const r = await res.json();
+    if (r.ok) {
+      show(`<b>${esc(r.message)}</b>${esc(r.action)} · ${esc(r.date)}<span class="t">${esc(r.time)}</span>${r.note ? esc(r.note) : ''}`, true);
+      $('#pin').value = ''; $('#name').value = '';
+    } else show(esc(r.error || 'Something went wrong. Try again.'));
+  } catch (e) {
+    show("Couldn't reach the time clock. Check the internet and try again, or tell a manager.");
+  }
+  busy = false; document.querySelectorAll('.btns button').forEach(b => b.disabled = false);
+}));
+load();
+if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+</script>
+</body>
+</html>

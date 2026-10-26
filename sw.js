@@ -1,6 +1,7 @@
-const CACHE = 'ph-5728ce6aaf65';
+const CACHE = 'ph-fd44679e3a00';
 const PRECACHE = [
  "./",
+ "clock.html",
  "icons/apple-touch-icon.png",
  "icons/icon-192.png",
  "icons/icon-512.png",
