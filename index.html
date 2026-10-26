@@ -109,7 +109,9 @@ main a.order{margin-top:30px}
 .book a{display:flex;align-items:center;justify-content:center;margin:10px auto 0;max-width:320px;height:48px;border-radius:12px;font-weight:700;font-size:18px;text-decoration:none}
 .book .call{background:var(--price);color:#fff}
 .book .text{background:#fff;color:var(--navy)}
-.book .fb{margin-top:12px}
+.book .fbbtn{gap:8px;background:#1877F2;color:#fff}
+.book .fb{margin-top:8px;font-size:14px;opacity:.85}
+footer a.fblink{display:inline-flex;align-items:center;gap:6px;color:#1877F2;font-weight:600;text-decoration:none}
 .paybadge{margin-top:10px;display:inline-flex;align-items:center;gap:6px;background:var(--card);border:2px solid var(--navy);color:var(--navy);border-radius:99px;padding:5px 12px;font-weight:600;font-size:14px}
 @media (min-width:560px){.pkgs{grid-template-columns:1fr 1fr}}
 [hidden]{display:none!important}
@@ -157,10 +159,11 @@ button.getapp img{border-radius:7px}
   <div class="book"><h3>Book now!</h3><p>For bookings &amp; inquiries, reach us at:</p>
     <a class="call" href="tel:+639054604595">📞 Call 0905 460 4595</a>
     <a class="text" href="sms:+639054604595">💬 Text us</a>
-    <p class="fb">Facebook: <b>Purrfect Hokkaido Ice Cream</b></p></div>
+    <a class="fbbtn" href="https://www.facebook.com/profile.php?id=61589359712141" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M24 12a12 12 0 1 0-13.9 11.9v-8.4H7.1V12h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.4l-.5 3.5h-2.9v8.4A12 12 0 0 0 24 12z"/></svg> Message us on Facebook</a>
+    <p class="fb">Purrfect Hokkaido Ice Cream</p></div>
 </section>
   <a class="order" href="order.html">Order for pickup →</a>
-  <footer><span class="key"><svg class="star" viewBox="0 0 100 100" role="img" aria-label="Best seller"><path d="M50 6 L62 36 L94 38 L69 58 L77 90 L50 72 L23 90 L31 58 L6 38 L38 36 Z" fill="#FCF41C" stroke="#141414" stroke-width="7" stroke-linejoin="round"/></svg> Best seller</span><span>Prices in Philippine pesos (₱)</span><span>💳 We accept cash, GCash &amp; all types of credit cards</span></footer>
+  <footer><span class="key"><svg class="star" viewBox="0 0 100 100" role="img" aria-label="Best seller"><path d="M50 6 L62 36 L94 38 L69 58 L77 90 L50 72 L23 90 L31 58 L6 38 L38 36 Z" fill="#FCF41C" stroke="#141414" stroke-width="7" stroke-linejoin="round"/></svg> Best seller</span><span>Prices in Philippine pesos (₱)</span><span>💳 We accept cash, GCash &amp; all types of credit cards</span><a class="fblink" href="https://www.facebook.com/profile.php?id=61589359712141" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M24 12a12 12 0 1 0-13.9 11.9v-8.4H7.1V12h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.4l-.5 3.5h-2.9v8.4A12 12 0 0 0 24 12z"/></svg> Follow us on Facebook</a></footer>
 </main>
 <script>
 (() => {
