@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Order for Pickup · Purrfect Hokkaido</title>
-<meta name="description" content="Order Purrfect Hokkaido for pickup and pay at the counter.">
+<meta name="description" content="Order Purrfect Hokkaido for pickup. Pay with GCash right away, or at the counter.">
 <meta name="theme-color" content="#122565">
 <meta name="robots" content="noindex">
 <link rel="icon" href="img/cat-mark.webp">
@@ -86,6 +86,23 @@ textarea{min-height:68px;resize:vertical}
 input:focus,select:focus,textarea:focus{outline:3px solid rgba(18,37,101,.25);border-color:var(--navy)}
 .hp{position:absolute;left:-5000px;width:1px;height:1px;overflow:hidden}
 .pay{margin-top:14px;padding:11px 12px;border-radius:12px;background:#eef1f8;color:var(--navy);font-size:15px;line-height:1.35}
+.paywith{border:0;margin-top:14px}
+.paywith legend{font-weight:600;font-size:15px;color:var(--navy)}
+.po{display:flex;align-items:center;gap:12px;margin-top:8px;padding:12px 14px;border:1.5px solid #b9bfcc;border-radius:14px;background:#fff;cursor:pointer}
+.po input{width:22px;height:22px;margin:0;flex:none;accent-color:var(--navy)}
+.po span{display:grid;gap:2px;font-size:17px;color:var(--navy)}
+.po small{font-weight:500;font-size:14px;color:var(--muted)}
+.po:has(input:checked){border-color:var(--navy);background:#eef1f8}
+.gc{margin-top:18px;border:2px solid #1f5fd1;border-radius:18px;padding:16px 14px;background:#f3f7ff;text-align:center}
+.gc h3{font-size:20px;color:#1f3e9e}
+.gc .amt{margin-top:6px;font-size:16px;color:var(--ink)}
+.gc .amt b{font-size:30px;color:var(--price)}
+.gc img{display:block;width:100%;max-width:280px;height:auto;margin:12px auto 0;border-radius:12px;background:#fff;padding:6px}
+.gc .mer{margin-top:6px;font-size:13px;color:var(--muted)}
+.gc .save{display:inline-block;margin-top:12px;text-decoration:none;font-weight:700;font-size:16px;color:#fff;background:#1f5fd1;border-radius:99px;padding:11px 22px}
+.gc ol{margin:14px 0 0;padding-left:22px;text-align:left;font-size:15px;line-height:1.45}
+.gc ol li+li{margin-top:4px}
+.gcalt{margin-top:12px;font:inherit;font-weight:700;font-size:15px;color:#1f5fd1;background:none;border:0;text-decoration:underline;cursor:pointer}
 .err{margin-top:12px;color:#b00020;font-weight:600;font-size:15px}
 .place{display:block;width:100%;margin-top:16px;font:inherit;font-weight:700;font-size:19px;color:#fff;background:var(--price);border:0;border-radius:14px;height:54px;cursor:pointer}
 .place:disabled{background:#c9cdd6;cursor:not-allowed}
@@ -109,7 +126,7 @@ input:focus,select:focus,textarea:focus{outline:3px solid rgba(18,37,101,.25);bo
 </header>
 <main class="wrap" id="app">
   <h1>Order for pickup</h1>
-  <p class="lead">Choose your items and place your order, then pay at the counter. We start making it once it’s paid.</p>
+  <p class="lead">Choose your items and place your order, then pay with GCash or at the counter. We start making it once it’s paid.</p>
   <a class="back" href="./">← Back to the menu</a>
   <div class="banner info" id="banner" hidden></div>
   <div id="menu"></div>
@@ -127,9 +144,13 @@ input:focus,select:focus,textarea:focus{outline:3px solid rgba(18,37,101,.25);bo
         <option value="30">In 30 minutes</option><option value="45">In 45 minutes</option><option value="60">In 1 hour</option>
       </select>
       <label for="notes">Notes <small>(optional, e.g. less ice)</small></label>
-      <textarea id="notes" name="notes" maxlength="200"></textarea>
+      <textarea id="notes" name="notes" maxlength="160"></textarea>
       <div class="hp" aria-hidden="true"><label for="website">Website</label><input id="website" name="website" tabindex="-1" autocomplete="off"></div>
-      <p class="pay">💵 Pay at the counter (cash, GCash or any credit card) and tell the staff your order number. <b>Orders are prepared only after payment.</b></p>
+      <fieldset class="paywith"><legend>How will you pay?</legend>
+        <label class="po"><input type="radio" name="paywith" value="gcash" checked><span><b>GCash now</b><small>Scan our QR after you place the order</small></span></label>
+        <label class="po"><input type="radio" name="paywith" value="counter"><span><b>At the counter</b><small>Cash, GCash or any credit card</small></span></label>
+      </fieldset>
+      <p class="pay"><b>Orders are prepared only after payment.</b> Keep your order number: you’ll see it on the next screen.</p>
       <p class="err" id="err" role="alert"></p>
       <button class="place" id="place" type="submit" disabled>Place order</button>
     </form>
@@ -290,10 +311,11 @@ $('#form').addEventListener('submit', async e => {
   if (!name) return (err.textContent = 'Please enter your name.'), $('#name').focus();
   const digits = phone.replace(/\D/g, '').replace(/^63/, '0').replace(/^9(\d{9})$/, '09$1');
   if (!/^09\d{9}$/.test(digits)) return (err.textContent = 'Please enter a valid mobile number, e.g. 0917 123 4567.'), $('#phone').focus();
+  const pay = (document.querySelector('input[name=paywith]:checked') || {}).value || 'counter';
   sending = true; renderCart(); $('#place').textContent = 'Sending…';
   try {
     const res = await fetch(DATA.url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ name, phone: digits, pickup: $('#pickup').value, notes: $('#notes').value, website: $('#website').value,
+      body: JSON.stringify({ name, phone: digits, pickup: $('#pickup').value, notes: payNote(pay) + $('#notes').value.trim(), website: $('#website').value,
         lines: ls.map(l => ({ id: l.id, option: l.option, qty: l.qty, addons: l.adds })) }) });
     const r = await res.json();
     if (!r.ok) {
@@ -301,7 +323,7 @@ $('#form').addEventListener('submit', async e => {
       if (r.soldOut) { soldOut = new Set(r.soldOut); soldOut.forEach(k => delete cart[k]); renderMenu(); }
       if (r.paused) { open = false; banner(r.error, true); renderMenu(); }
     } else {
-      const order = { code: r.order, total: r.total, pickup: r.pickup, placed: r.placed, phone: digits.slice(-4),
+      const order = { code: r.order, total: r.total, pickup: r.pickup, placed: r.placed, phone: digits.slice(-4), pay,
         summary: ls.map(l => `${l.qty}× ${l.name}${l.option ? ' (' + l.option + ')' : ''}${l.addNames.map(n => ' + ' + n).join('')}`).join('\n') };
       store.set('ph-last-order', order); cart = {}; extras = {}; store.set('ph-cart', null); store.set('ph-extras', null);
       showDone(order);
@@ -315,25 +337,42 @@ $('#form').addEventListener('submit', async e => {
 
 const STATUS_TEXT = {
   New: ['Waiting for payment', "Pay at the counter (cash, GCash or any credit card) and show this number. We start making your order once it's paid."],
+  NewGcash: ['Waiting for payment', "Pay with GCash below. We start making your order once we see your payment."],
   Preparing: ['Paid · preparing', "Thank you! We're making your order now."],
   Ready: ['Ready for pickup!', 'Come to the counter and show this number.'],
   'Picked up': ['Picked up', 'Enjoy! Thank you for ordering.'],
   Cancelled: ['Cancelled', 'This order was cancelled. Please ask at the counter.'],
 };
+// Staff see the payment choice at the start of the order's Notes (Orders and Find order tabs).
+const payNote = pay => pay === 'gcash' ? 'PAY: GCash QR online. ' : 'PAY: at counter. ';
+const newText = (o, status) => STATUS_TEXT[(status || 'New') === 'New' && o.pay === 'gcash' ? 'NewGcash' : status || 'New'] || STATUS_TEXT.New;
+// The store's GCash QR (make_gcash_qr.py). Static QR Ph: the customer types the total.
+const gcashBox = o => `<div class="gc" id="gc">
+    <h3>Pay with GCash</h3>
+    <p class="amt">Amount to send<br><b>${peso(o.total)}</b></p>
+    <img src="img/gcash-qr.png" alt="Purrfect Hokkaido GCash QR code" width="300" height="300">
+    <p class="mer">Hokkaido Ice Cream · L0017499</p>
+    <a class="save" href="img/gcash-qr.png" download="purrfect-hokkaido-gcash-qr.png">Save QR to my phone</a>
+    <ol><li>Open GCash, tap <b>Pay QR</b>, then <b>Upload QR</b> and pick the saved QR (or scan it from another phone).</li>
+    <li>Type exactly <b>${peso(o.total)}</b> and pay.</li>
+    <li>Screenshot the GCash receipt and show it with order number <b>${esc(o.code)}</b> when you pick up.</li></ol></div>`;
 let poll;
 function showDone(o, status) {
   window.scrollTo(0, 0);
   $('#cartbar').hidden = true;
-  const [label, text] = STATUS_TEXT[status || 'New'] || STATUS_TEXT.New;
+  const [label, text] = newText(o, status);
+  const unpaid = (status || 'New') === 'New';
   $('#app').innerHTML = `<div class="done">
     <p class="k">Your order number</p><p class="num">${esc(o.code)}</p>
     <span class="st ${esc((status || 'New').split(' ')[0])}" id="st">${esc(label)}</span>
     <p id="sttext">${esc(text)}</p>
-    <p><b>Total ${peso(o.total)}</b> · pay at the counter first<br>Pickup: ${esc(o.pickup || '')}</p>
+    <p><b>Total ${peso(o.total)}</b> · ${o.pay === 'gcash' ? 'pay with GCash first' : 'pay at the counter first'}<br>Pickup: ${esc(o.pickup || '')}</p>
+    ${unpaid ? (o.pay === 'gcash' ? gcashBox(o) : '<button class="gcalt" id="gcalt">Pay with GCash now instead</button>') : ''}
     <div class="sum">${esc(o.summary)}</div>
     <button class="again" id="again">Start a new order</button>
     <p><a class="back" href="./">← Back to the menu</a></p></div>`;
   $('#again').onclick = () => { store.set('ph-last-order', null); location.reload(); };
+  if ($('#gcalt')) $('#gcalt').onclick = () => { $('#gcalt').outerHTML = gcashBox(o); };
   clearInterval(poll);
   if (status !== 'Picked up' && status !== 'Cancelled') poll = setInterval(() => checkOrder(o), 20000);
 }
@@ -342,9 +381,10 @@ async function checkOrder(o) {
   try {
     const r = await (await fetch(`${DATA.url}?order=${encodeURIComponent(o.code)}&phone=${o.phone}`, { cache: 'no-store' })).json();
     if (r.ok && r.status) {
-      const [label, text] = STATUS_TEXT[r.status] || STATUS_TEXT.New;
+      const [label, text] = newText(o, r.status);
       const st = $('#st'); if (!st) return;
       st.textContent = label; st.className = 'st ' + r.status.split(' ')[0]; $('#sttext').textContent = text;
+      if (r.status !== 'New') { const g = $('#gc') || $('#gcalt'); if (g) g.remove(); }
       if (r.status === 'Picked up' || r.status === 'Cancelled') { clearInterval(poll); store.set('ph-last-order', null); }
     }
   } catch (e) {}

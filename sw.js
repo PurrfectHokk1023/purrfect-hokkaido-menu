@@ -1,4 +1,4 @@
-const CACHE = 'ph-fd44679e3a00';
+const CACHE = 'ph-5e6f083dc360';
 const PRECACHE = [
  "./",
  "clock.html",
@@ -19,6 +19,7 @@ const PRECACHE = [
  "img/deal-hokkaido-waffle-crisp.webp",
  "img/deal-matcha-belgian-cone.webp",
  "img/deal-matcha-waffle-crisp.webp",
+ "img/gcash-qr.png",
  "img/hk-caramel.webp",
  "img/hk-chocolate.webp",
  "img/hk-matcha.webp",

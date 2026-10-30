@@ -5,7 +5,7 @@
  "start_url": "./",
  "scope": "./",
  "display": "standalone",
- "description": "Purrfect Hokkaido menu and prices, and pickup orders you pay for at the counter.",
+ "description": "Purrfect Hokkaido menu and prices, and pickup orders you pay for with GCash or at the counter.",
  "background_color": "#EAEAEA",
  "theme_color": "#122565",
  "lang": "en-PH",
