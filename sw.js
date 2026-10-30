@@ -1,4 +1,4 @@
-const CACHE = 'ph-5e6f083dc360';
+const CACHE = 'ph-46a5d25bc31b';
 const PRECACHE = [
  "./",
  "clock.html",
@@ -46,7 +46,8 @@ const PRECACHE = [
  "index.html",
  "install.html",
  "manifest.webmanifest",
- "order.html"
+ "order.html",
+ "print.html"
 ];
 self.addEventListener('install', e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(PRECACHE)).then(() => self.skipWaiting())));
 self.addEventListener('activate', e => e.waitUntil(caches.keys()
