@@ -1,4 +1,4 @@
-const CACHE = 'ph-ca728e562c8a';
+const CACHE = 'ph-0286e5b614cc';
 const PRECACHE = [
  "./",
  "clock/index.html",

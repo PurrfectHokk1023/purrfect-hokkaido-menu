@@ -117,6 +117,45 @@ input:focus,select:focus,textarea:focus{outline:3px solid rgba(18,37,101,.25);bo
 .st.Ready{background:#d9ead3;color:#1d5a0c} .st.Picked{background:#eee;color:#444} .st.Cancelled{background:#f4cccc;color:#7a0000}
 .done p{margin-top:12px;font-size:16px;line-height:1.4}
 .done .sum{margin-top:16px;text-align:left;border-top:1px solid var(--line);padding-top:12px;font-size:15px;white-space:pre-line;color:var(--indigo)}
+/* app-style browsing (2 Nov): sticky search + section tabs, Best sellers row, item sheet */
+.top{position:sticky;top:0;z-index:20;background:var(--bg);margin:14px -16px 0;padding:10px 16px 0;box-shadow:0 6px 10px -8px rgba(18,37,101,.25)}
+.search{position:relative}
+.search svg{position:absolute;left:14px;top:50%;width:18px;height:18px;transform:translateY(-50%);color:var(--muted)}
+.search input{margin:0;padding-left:42px;border-radius:99px;height:46px;font-size:16px}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding:10px 0;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{flex:none;font:inherit;font-weight:600;font-size:14.5px;color:var(--navy);background:#fff;border:1.5px solid #c9cdd6;border-radius:99px;height:36px;padding:0 14px;cursor:pointer;white-space:nowrap}
+.tabs button[aria-current="true"]{color:#fff;background:var(--navy);border-color:var(--navy)}
+section{scroll-margin-top:124px}
+#best{margin-top:18px}
+#best h2{border:0;padding:0;display:flex;align-items:center;gap:6px}
+.row{display:flex;gap:12px;overflow-x:auto;padding:10px 2px 6px;margin:0 -16px;padding-left:16px;padding-right:16px;scroll-snap-type:x mandatory;scroll-padding-inline:16px;scrollbar-width:none}
+.row::-webkit-scrollbar{display:none}
+.card{flex:none;width:150px;scroll-snap-align:start;background:#fff;border-radius:16px;padding:10px;box-shadow:0 2px 8px rgba(18,37,101,.08);display:flex;flex-direction:column;gap:6px}
+.card img{width:100%;height:110px;object-fit:contain;cursor:pointer}
+.card .cn{font-weight:600;font-size:15px;line-height:1.15;color:var(--indigo);cursor:pointer;min-height:35px}
+.card .cb{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-top:auto}
+.card .pr{font-weight:700;font-size:16px;color:var(--price)}
+.card .add{min-width:0;width:38px;padding:0;font-size:22px}
+.card .step{height:34px} .card .step button{width:30px;height:32px} .card .step b{min-width:16px}
+.card .soldout{padding:5px 8px;font-size:12px}
+.item .pic,.item .nm{cursor:pointer}
+.item[hidden],section[hidden],#best[hidden]{display:none}
+.more{font-size:13.5px;color:var(--teal);font-weight:600}
+.sheet{position:fixed;inset:0;z-index:50}
+.sheet[hidden]{display:none}
+.sheet .shade{position:absolute;inset:0;background:rgba(10,16,40,.5);animation:fade .2s}
+.sheet .panel{position:absolute;left:0;right:0;bottom:0;max-width:720px;margin:0 auto;max-height:88vh;overflow-y:auto;background:#fff;border-radius:22px 22px 0 0;padding:14px 18px calc(22px + env(safe-area-inset-bottom));animation:up .25s ease-out}
+.sheet .grab{width:44px;height:5px;border-radius:99px;background:#d0d4dc;margin:0 auto 6px}
+.sheet .x{position:absolute;right:12px;top:10px;font:inherit;font-size:26px;line-height:1;color:var(--navy);background:#eef1f8;border:0;border-radius:50%;width:40px;height:40px;cursor:pointer}
+.sheet .hero{display:block;width:100%;max-width:300px;height:230px;object-fit:contain;margin:8px auto 4px}
+.sheet h3{font-weight:700;font-size:24px;line-height:1.15;color:var(--navy);display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-right:44px}
+.sheet .sec{margin-top:2px;font-size:14px;color:var(--muted)}
+.sheet .opts{margin-top:10px;border-top:1px solid var(--line);padding-top:4px}
+.sheet .go{display:block;width:100%;margin-top:14px;font:inherit;font-weight:700;font-size:17px;color:#fff;background:var(--navy);border:0;border-radius:14px;height:50px;cursor:pointer}
+@keyframes up{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.sheet .panel,.sheet .shade{animation:none}}
 .again{margin-top:18px;font:inherit;font-weight:700;font-size:16px;color:var(--navy);background:#fff;border:1.5px solid var(--navy);border-radius:99px;height:44px;padding:0 20px;cursor:pointer}
 </style>
 </head>
@@ -129,6 +168,13 @@ input:focus,select:focus,textarea:focus{outline:3px solid rgba(18,37,101,.25);bo
   <p class="lead">Choose your items and place your order, then pay with GCash or at the counter. We start making it once it’s paid.</p>
   <a class="back" href="./">← Back to the menu</a>
   <div class="banner info" id="banner" hidden></div>
+  <div class="top" id="top">
+    <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="Search, e.g. matcha, boba, latte" aria-label="Search the menu" autocomplete="off" enterkeyhint="search"></div>
+    <nav class="tabs" id="tabs" aria-label="Menu sections"></nav>
+  </div>
+  <section id="best"></section>
+  <p class="empty" id="nomatch" hidden></p>
   <div id="menu"></div>
   <section id="checkout">
     <div class="cohead"><h2>Your order</h2><button type="button" class="clear" id="clear" hidden>Clear all</button></div>
@@ -156,6 +202,8 @@ input:focus,select:focus,textarea:focus{outline:3px solid rgba(18,37,101,.25);bo
     </form>
   </section>
 </main>
+<div class="sheet" id="sheet" hidden><div class="shade" data-close></div>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="shname"><div class="grab"></div><button type="button" class="x" data-close aria-label="Close">×</button><div id="shbody"></div></div></div>
 <div class="cartbar" id="cartbar" hidden><a href="#checkout"><span id="cartcount"></span><span id="carttotal"></span></a></div>
 <script>
 const DATA = {"url": "https://script.google.com/macros/s/AKfycbzOB4gUkuWzD5L4ECpIFeCc_D-4tmtCuEkKWf5mIACTYsxx09jv8g1vN0PO77zvRhA/exec", "sections": [{"title": "Cones & Deals", "items": [{"id": "cone-hokkaido-waffle-crisp", "name": "Hokkaido Waffle Crisp", "img": "img/deal-hokkaido-waffle-crisp.webp", "best": false, "note": "", "full": "Hokkaido Waffle Crisp", "options": [{"label": "", "price": 35}]}, {"id": "cone-matcha-waffle-crisp", "name": "Matcha Waffle Crisp", "img": "img/deal-matcha-waffle-crisp.webp", "best": false, "note": "New", "full": "Matcha Waffle Crisp", "options": [{"label": "", "price": 45}]}, {"id": "cone-hokkaido-belgian-cone", "name": "Hokkaido Belgian Cone", "img": "img/deal-hokkaido-belgian-cone.webp", "best": false, "note": "Buy 1 Get 1 · 2 cones", "full": "Hokkaido Belgian Cone (Buy 1 Get 1)", "options": [{"label": "", "price": 60}]}, {"id": "cone-matcha-belgian-cone", "name": "Matcha Belgian Cone", "img": "img/deal-matcha-belgian-cone.webp", "best": false, "note": "New", "full": "Matcha Belgian Cone", "options": [{"label": "", "price": 80}]}]}, {"title": "Hokkaido Belgian Waffle", "items": [{"id": "hkw-chocolate", "name": "Chocolate", "full": "Hokkaido Belgian Waffle – Chocolate", "img": "img/hk-chocolate.webp", "best": false, "note": "", "options": [{"label": "", "price": 80}]}, {"id": "hkw-matcha", "name": "Matcha", "full": "Hokkaido Belgian Waffle – Matcha", "img": "img/hk-matcha.webp", "best": false, "note": "", "options": [{"label": "", "price": 80}]}, {"id": "hkw-strawberry", "name": "Strawberry", "full": "Hokkaido Belgian Waffle – Strawberry", "img": "img/hk-strawberry.webp", "best": false, "note": "", "options": [{"label": "", "price": 80}]}, {"id": "hkw-caramel", "name": "Caramel", "full": "Hokkaido Belgian Waffle – Caramel", "img": "img/hk-caramel.webp", "best": false, "note": "", "options": [{"label": "", "price": 80}]}]}, {"title": "Belgian Waffle", "items": [{"id": "bew-chocolate", "name": "Chocolate", "full": "Belgian Waffle – Chocolate", "img": "img/be-chocolate.webp", "best": false, "note": "", "options": [{"label": "", "price": 70}]}, {"id": "bew-strawberry", "name": "Strawberry", "full": "Belgian Waffle – Strawberry", "img": "img/be-strawberry.webp", "best": false, "note": "", "options": [{"label": "", "price": 70}]}, {"id": "bew-matcha", "name": "Matcha", "full": "Belgian Waffle – Matcha", "img": "img/be-matcha.webp", "best": false, "note": "", "options": [{"label": "", "price": 70}]}, {"id": "bew-dark-caramel", "name": "Dark Caramel", "full": "Belgian Waffle – Dark Caramel", "img": "img/be-dark-caramel.webp", "best": false, "note": "", "options": [{"label": "", "price": 70}]}]}, {"title": "Hokkaido Sundaes", "items": [{"id": "sun-oreo-flow", "name": "Oreo Flow", "full": "Oreo Flow", "img": "img/sundae-oreo-flow.webp", "best": false, "note": "", "options": [{"label": "", "price": 80}]}, {"id": "sun-milo-overload", "name": "Milo Overload", "full": "Milo Overload", "img": "img/sundae-milo-overload.webp", "best": false, "note": "", "options": [{"label": "", "price": 80}]}, {"id": "sun-chocolate", "name": "Chocolate Sundae", "full": "Chocolate Sundae", "img": "img/sundae-chocolate.webp", "best": false, "note": "", "options": [{"label": "", "price": 70}]}, {"id": "sun-caramel", "name": "Caramel Sundae", "full": "Caramel Sundae", "img": "img/sundae-caramel.webp", "best": false, "note": "", "options": [{"label": "", "price": 70}]}, {"id": "sun-matcha", "name": "Matcha Sundae", "full": "Matcha Sundae", "img": "img/sundae-matcha.webp", "best": false, "note": "", "options": [{"label": "", "price": 70}]}, {"id": "sun-strawberry", "name": "Strawberry Sundae", "full": "Strawberry Sundae", "img": "img/sundae-strawberry.webp", "best": false, "note": "", "options": [{"label": "", "price": 70}]}, {"id": "sun-chocolate-crumble-bites", "name": "Chocolate Crumble Bites", "full": "Chocolate Crumble Bites", "img": "img/sundae-chocolate-crumble-bites.webp", "best": true, "note": "", "options": [{"label": "", "price": 90}]}, {"id": "sun-honey-comb-crumble", "name": "Honey Comb Crumble", "full": "Honey Comb Crumble", "img": "img/sundae-honey-comb-crumble.webp", "best": false, "note": "", "options": [{"label": "", "price": 90}]}, {"id": "sun-karamitsu-boba", "name": "Karamitsu Boba", "full": "Karamitsu Boba", "img": "img/sundae-karamitsu-boba.webp", "best": true, "note": "", "options": [{"label": "", "price": 90}]}, {"id": "sun-biscoff-supreme", "name": "Biscoff Supreme", "full": "Biscoff Supreme", "img": "img/sundae-biscoff-supreme.webp", "best": true, "note": "", "options": [{"label": "", "price": 95}]}]}, {"title": "Hokkaido Milkshakes", "items": [{"id": "shk-hokkaido-boba", "name": "Hokkaido Boba", "full": "Hokkaido Boba Milkshake", "img": "img/shake-hokkaido-boba.webp", "best": true, "note": "", "options": [{"label": "", "price": 120}]}, {"id": "shk-matcha", "name": "Matcha", "full": "Matcha Milkshake", "img": "img/shake-matcha.webp", "best": true, "note": "", "options": [{"label": "", "price": 120}]}, {"id": "shk-dark-mocha", "name": "Dark Mocha", "full": "Dark Mocha Milkshake", "img": "img/shake-dark-mocha.webp", "best": false, "note": "", "options": [{"label": "", "price": 120}]}, {"id": "shk-coffee-caramel", "name": "Coffee Caramel", "full": "Coffee Caramel Milkshake", "img": "img/shake-coffee-caramel.webp", "best": false, "note": "", "options": [{"label": "", "price": 120}]}, {"id": "shk-chocolate-brownie", "name": "Chocolate Brownie", "full": "Chocolate Brownie Milkshake", "img": "img/shake-chocolate-brownie.webp", "best": true, "note": "", "options": [{"label": "", "price": 120}]}, {"id": "shk-oreo-and-cream", "name": "Oreo and Cream", "full": "Oreo and Cream Milkshake", "img": "img/shake-oreo-and-cream.webp", "best": false, "note": "", "options": [{"label": "", "price": 120}]}, {"id": "shk-blueberry-cheesecake", "name": "Blueberry Cheesecake", "full": "Blueberry Cheesecake Milkshake", "img": "img/shake-blueberry-cheesecake.webp", "best": false, "note": "", "options": [{"label": "", "price": 120}]}, {"id": "shk-classic-strawberry", "name": "Classic Strawberry", "full": "Classic Strawberry Milkshake", "img": "img/shake-classic-strawberry.webp", "best": true, "note": "", "options": [{"label": "", "price": 120}]}]}, {"title": "Ice cream & shake add-ons", "items": [{"id": "add-pearl", "name": "Pearl", "full": "Add-on: Pearl", "img": null, "best": false, "note": "", "options": [{"label": "", "price": 15}]}, {"id": "add-nata-de-coco", "name": "Nata de Coco", "full": "Add-on: Nata de Coco", "img": null, "best": false, "note": "", "options": [{"label": "", "price": 15}]}, {"id": "add-coffee-jelly", "name": "Coffee Jelly", "full": "Add-on: Coffee Jelly", "img": null, "best": false, "note": "", "options": [{"label": "", "price": 15}]}, {"id": "add-toppings", "name": "Toppings", "full": "Add-on: Toppings", "img": null, "best": false, "note": "", "options": [{"label": "", "price": 10}]}, {"id": "add-syrups", "name": "Syrups", "full": "Add-on: Syrups", "img": null, "best": false, "note": "", "options": [{"label": "", "price": 5}]}]}, {"title": "Primo Classics", "items": [{"id": "pcl-americano", "name": "Americano", "full": "Americano", "img": null, "best": false, "note": "", "options": [{"label": "Hot · Mediano", "price": 70}, {"label": "Iced · Mediano", "price": 70}, {"label": "Iced · Grande", "price": 80}], "addons": ["cad-espresso-shot", "cad-oat-milk"]}, {"id": "pcl-latte", "name": "Latte", "full": "Latte", "img": null, "best": false, "note": "", "options": [{"label": "Hot · Mediano", "price": 90}, {"label": "Iced · Mediano", "price": 90}, {"label": "Iced · Grande", "price": 100}], "addons": ["cad-espresso-shot", "cad-oat-milk"]}, {"id": "pcl-cappuccino", "name": "Cappuccino", "full": "Cappuccino", "img": null, "best": false, "note": "", "options": [{"label": "Hot · Mediano", "price": 90}, {"label": "Iced · Mediano", "price": 90}, {"label": "Iced · Grande", "price": 100}], "addons": ["cad-espresso-shot", "cad-oat-milk"]}], "sub": "Want an extra espresso shot (+₱30) or oat milk (+₱40)? Tap Add, then pick it under the drink."}, {"title": "Primo Specialty", "items": [{"id": "psp-kastilla-latte", "name": "Kastilla Latte", "full": "Kastilla Latte", "img": null, "best": false, "note": "", "options": [{"label": "Hot · Mediano", "price": 100}, {"label": "Iced · Mediano", "price": 100}, {"label": "Iced · Grande", "price": 120}], "addons": ["cad-espresso-shot", "cad-oat-milk"]}, {"id": "psp-matcha-espresso", "name": "Matcha Espresso", "full": "Matcha Espresso", "img": null, "best": false, "note": "", "options": [{"label": "Hot · Mediano", "price": 100}, {"label": "Iced · Mediano", "price": 100}, {"label": "Iced · Grande", "price": 120}], "addons": ["cad-espresso-shot", "cad-oat-milk"]}, {"id": "psp-hazelnut-latte", "name": "Hazelnut Latte", "full": "Hazelnut Latte", "img": null, "best": false, "note": "", "options": [{"label": "Hot · Mediano", "price": 100}, {"label": "Iced · Mediano", "price": 100}, {"label": "Iced · Grande", "price": 120}], "addons": ["cad-espresso-shot", "cad-oat-milk"]}, {"id": "psp-caramel-macchiato", "name": "Caramel Macchiato", "full": "Caramel Macchiato", "img": null, "best": false, "note": "", "options": [{"label": "Hot · Mediano", "price": 100}, {"label": "Iced · Mediano", "price": 100}, {"label": "Iced · Grande", "price": 120}], "addons": ["cad-espresso-shot", "cad-oat-milk"]}, {"id": "psp-mocha-latte", "name": "Mocha Latte", "full": "Mocha Latte", "img": null, "best": false, "note": "", "options": [{"label": "Hot · Mediano", "price": 100}, {"label": "Iced · Mediano", "price": 100}, {"label": "Iced · Grande", "price": 120}], "addons": ["cad-espresso-shot", "cad-oat-milk"]}, {"id": "psp-dark-mocha-latte", "name": "Dark Mocha Latte", "full": "Dark Mocha Latte", "img": null, "best": false, "note": "", "options": [{"label": "Hot · Mediano", "price": 100}, {"label": "Iced · Mediano", "price": 100}, {"label": "Iced · Grande", "price": 120}], "addons": ["cad-espresso-shot", "cad-oat-milk"]}, {"id": "psp-white-mocha-latte", "name": "White Mocha Latte", "full": "White Mocha Latte", "img": null, "best": false, "note": "", "options": [{"label": "Hot · Mediano", "price": 100}, {"label": "Iced · Mediano", "price": 100}, {"label": "Iced · Grande", "price": 120}], "addons": ["cad-espresso-shot", "cad-oat-milk"]}, {"id": "psp-irish-cream-latte", "name": "Irish Cream Latte", "full": "Irish Cream Latte", "img": null, "best": false, "note": "", "options": [{"label": "Hot · Mediano", "price": 100}, {"label": "Iced · Mediano", "price": 100}, {"label": "Iced · Grande", "price": 120}], "addons": ["cad-espresso-shot", "cad-oat-milk"]}, {"id": "psp-ube-espresso", "name": "Ube Espresso", "full": "Ube Espresso", "img": null, "best": false, "note": "", "options": [{"label": "Hot · Mediano", "price": 100}, {"label": "Iced · Mediano", "price": 100}, {"label": "Iced · Grande", "price": 120}], "addons": ["cad-espresso-shot", "cad-oat-milk"]}, {"id": "psp-affogato", "name": "Affogato", "full": "Affogato", "img": null, "best": false, "note": "", "options": [{"label": "", "price": 100}]}], "sub": "Want an extra espresso shot (+₱30) or oat milk (+₱40)? Tap Add, then pick it under the drink."}, {"title": "Iced Drinks", "items": [{"id": "ice-gourmet-chocolate", "name": "Gourmet Chocolate", "full": "Gourmet Chocolate", "img": null, "best": false, "note": "Mediano", "options": [{"label": "", "price": 110}], "addons": ["cad-espresso-shot", "cad-oat-milk"]}, {"id": "ice-iced-strawberry-milk", "name": "Iced Strawberry Milk", "full": "Iced Strawberry Milk", "img": null, "best": false, "note": "Mediano", "options": [{"label": "", "price": 110}], "addons": ["cad-espresso-shot", "cad-oat-milk"]}, {"id": "ice-matcha-latte", "name": "Matcha Latte", "full": "Matcha Latte", "img": null, "best": false, "note": "Mediano", "options": [{"label": "", "price": 110}], "addons": ["cad-espresso-shot", "cad-oat-milk"]}, {"id": "ice-ube-latte", "name": "Ube Latte", "full": "Ube Latte", "img": null, "best": false, "note": "Mediano", "options": [{"label": "", "price": 110}], "addons": ["cad-espresso-shot", "cad-oat-milk"]}], "sub": "Want an extra espresso shot (+₱30) or oat milk (+₱40)? Tap Add, then pick it under the drink."}, {"title": "Snacks", "items": [{"id": "snk-chicken-poppers", "name": "Chicken Poppers", "full": "Chicken Poppers (100g)", "img": null, "best": false, "note": "100g", "options": [{"label": "", "price": 150}]}, {"id": "snk-fries", "name": "Fries", "full": "Fries", "img": null, "best": false, "note": "", "options": [{"label": "", "price": 120}]}, {"id": "snk-chicken-poppers-fries", "name": "Chicken Poppers + Fries", "full": "Combo: Chicken Poppers + Fries", "img": null, "best": false, "note": "Combo", "options": [{"label": "", "price": 220}]}, {"id": "snk-nachos", "name": "Nachos", "full": "Nachos", "img": null, "best": false, "note": "", "options": [{"label": "", "price": 240}]}]}, {"title": "Coffee add-ons", "items": [{"id": "cad-espresso-shot", "name": "Espresso Shot", "full": "Coffee add-on: Espresso Shot", "img": null, "best": false, "note": "", "options": [{"label": "", "price": 30}]}, {"id": "cad-oat-milk", "name": "Oat Milk", "full": "Coffee add-on: Oat Milk", "img": null, "best": false, "note": "", "options": [{"label": "", "price": 40}]}], "hidden": true}]};
@@ -195,16 +243,79 @@ function addsRow(it, k) {
 
 function optHtml(it, o) {
   const k = key(it.id, o.label);
-  return `<div class="optw" id="w-${esc(k)}"><div class="opt"><span class="ol">${esc(o.label)}</span><span class="pr">${peso(o.price)}</span>${control(it.id, o.label)}</div>${addsRow(it, k)}</div>`;
+  return `<div class="optw" data-w="${esc(k)}"><div class="opt"><span class="ol">${esc(o.label)}</span><span class="pr">${peso(o.price)}</span>${control(it.id, o.label)}</div>${addsRow(it, k)}</div>`;
 }
 
+const SECS = DATA.sections.filter(s => !s.hidden);
+const secOf = {};
+SECS.forEach((s, i) => s.items.forEach(it => { secOf[it.id] = s.title; it.find = (it.name + ' ' + it.full + ' ' + s.title).toLowerCase(); }));
+const nameHtml = it => `${it.note && it.note !== 'New' ? `<span class="tag">${esc(it.note)}</span>` : ''}${esc(it.name)}${it.best ? STAR : ''}${it.note === 'New' ? '<span class="tag new">New</span>' : ''}`;
+
 function renderMenu() {
-  $('#menu').innerHTML = DATA.sections.filter(s => !s.hidden).map(s => `<section><h2>${esc(s.title)}</h2>${s.sub ? `<p class="sub">${esc(s.sub)}</p>` : ''}${s.items.map(it => `
-    <div class="item">${it.img ? `<img class="pic" src="${it.img}" alt="" loading="lazy" width="64" height="64">` : ''}
-      <div class="body"><div class="nm">${it.note && it.note !== 'New' ? `<span class="tag">${esc(it.note)}</span>` : ''}${esc(it.name)}${it.best ? STAR : ''}${it.note === 'New' ? '<span class="tag new">New</span>' : ''}</div>
+  $('#menu').innerHTML = SECS.map((s, i) => `<section id="s-${i}" data-s="${i}"><h2>${esc(s.title)}</h2>${s.sub ? `<p class="sub">${esc(s.sub)}</p>` : ''}${s.items.map(it => `
+    <div class="item" data-i="${esc(it.id)}">${it.img ? `<img class="pic" src="${it.img}" alt="" loading="lazy" width="64" height="64" data-open="${esc(it.id)}">` : ''}
+      <div class="body"><div class="nm" data-open="${esc(it.id)}">${nameHtml(it)}</div>
         ${it.options.map(o => optHtml(it, o)).join('')}
       </div></div>`).join('')}</section>`).join('');
+  renderBest(); filter();
+  if (!$('#sheet').hidden) openSheet($('#sheet').dataset.id);
 }
+
+// Best sellers: the deals and every starred item, one tap to add (first option) or tap the photo for all options
+const BEST = SECS.flatMap(s => s.items).filter(it => it.img && (it.best || secOf[it.id] === 'Cones & Deals'));
+function cardHtml(it) {
+  const o = it.options[0], more = it.options.length > 1;
+  return `<div class="card" data-c="${esc(it.id)}"><img src="${it.img}" alt="" loading="lazy" data-open="${esc(it.id)}">
+    <div class="cn" data-open="${esc(it.id)}">${esc(it.name)}</div>
+    <div class="cb"><span class="pr">${peso(o.price)}</span>${more ? `<button class="add" data-open="${esc(it.id)}" aria-label="Choose options">+</button>` : control(it.id, o.label).replace('>Add<', ' aria-label="Add ' + esc(it.name) + '">+<')}</div></div>`;
+}
+function renderBest() {
+  $('#best').innerHTML = `<h2>${STAR} Best sellers &amp; deals</h2><div class="row">${BEST.map(cardHtml).join('')}</div>`;
+}
+
+// Section tabs follow the scroll; tapping one jumps to that section
+$('#tabs').innerHTML = SECS.map((s, i) => `<button type="button" data-tab="${i}">${esc(s.title.replace('Hokkaido Belgian Waffle', 'Hokkaido Waffle').replace('Hokkaido Sundaes', 'Sundaes').replace('Hokkaido Milkshakes', 'Milkshakes').replace('Ice cream & shake add-ons', 'Add-ons'))}</button>`).join('');
+function markTab(i) {
+  document.querySelectorAll('#tabs button').forEach(b => {
+    const on = b.dataset.tab === String(i); b.setAttribute('aria-current', on);
+    if (on) b.parentNode.scrollTo({ left: b.offsetLeft - 16, behavior: 'smooth' });
+  });
+}
+let spyLock = 0;
+addEventListener('scroll', () => {
+  if (Date.now() < spyLock) return;
+  const line = $('#top').getBoundingClientRect().bottom + 12;
+  let cur = null;
+  document.querySelectorAll('#menu section:not([hidden])').forEach(sec => { if (sec.getBoundingClientRect().top <= line) cur = sec.dataset.s; });
+  if (cur !== window.__tab) { window.__tab = cur; markTab(cur); }
+}, { passive: true });
+
+// Search: matches item, full name and section ("boba" finds the boba sundae and shake)
+function filter() {
+  const q = ($('#q').value || '').trim().toLowerCase();
+  let hits = 0;
+  document.querySelectorAll('#menu section').forEach(sec => {
+    let n = 0;
+    sec.querySelectorAll('.item').forEach(el => { const ok = !q || items[el.dataset.i].find.includes(q); el.hidden = !ok; if (ok) n++; });
+    sec.hidden = !n; hits += n;
+  });
+  $('#best').hidden = !!q;
+  const nm = $('#nomatch'); nm.hidden = !q || hits > 0; nm.textContent = `Nothing matches “${q}”. Try another word, like “cone” or “latte”.`;
+}
+$('#q').addEventListener('input', () => { filter(); if ($('#q').value) $('#top').scrollIntoView({ block: 'start' }); });
+
+// Item sheet: big photo and every option, slides up from the bottom
+function openSheet(id) {
+  const it = items[id]; if (!it) return;
+  const sh = $('#sheet'); sh.dataset.id = id;
+  $('#shbody').innerHTML = `${it.img ? `<img class="hero" src="${it.img}" alt="">` : ''}<h3 id="shname">${nameHtml(it)}</h3>
+    <p class="sec">${esc(secOf[id] || '')}${it.addons ? ' · add-ons after you tap Add' : ''}</p>
+    <div class="opts">${it.options.map(o => optHtml(it, o)).join('')}</div>
+    <button type="button" class="go" data-close>Done</button>`;
+  if (sh.hidden) { sh.hidden = false; document.body.style.overflow = 'hidden'; sh.querySelector('.x').focus({ preventScroll: true }); }
+}
+function closeSheet() { const sh = $('#sheet'); if (sh.hidden) return; sh.hidden = true; document.body.style.overflow = ''; }
+addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
 
 function lines() {
   return Object.entries(cart).filter(([, q]) => q > 0).map(([k, q]) => {
@@ -255,12 +366,18 @@ function renderCart() {
 }
 
 function update(k) {
-  const [id, opt] = k.split('|'), it = items[id], w = document.getElementById('w-' + k);
-  if (w) w.outerHTML = optHtml(it, it.options.find(o => o.label === opt));
+  const [id, opt] = k.split('|'), it = items[id], o = it.options.find(x => x.label === opt);
+  document.querySelectorAll(`[data-w="${CSS.escape(k)}"]`).forEach(w => { w.outerHTML = optHtml(it, o); });
+  document.querySelectorAll(`[data-c="${CSS.escape(id)}"]`).forEach(c => { c.outerHTML = cardHtml(it); });
   renderCart();
 }
 
 document.addEventListener('click', e => {
+  if (e.target.closest('[data-close]')) return closeSheet();
+  const t = e.target.closest('[data-tab]');
+  if (t) { const sec = $('#s-' + t.dataset.tab); spyLock = Date.now() + 700; markTab(t.dataset.tab); window.__tab = t.dataset.tab; return sec && sec.scrollIntoView({ behavior: 'smooth' }); }
+  const op = e.target.closest('[data-open]');
+  if (op) return openSheet(op.dataset.open);
   if (sending) return;
   const ed = e.target.closest('button[data-ed]');
   if (ed) { editing = ed.dataset.ed || null; merged = null; return renderCart(); }
